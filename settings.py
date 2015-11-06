@@ -2,6 +2,17 @@ from jodelpy import Location
 
 __author__ = 'Jan'
 
+class Location():
+
+    def __init__(self, latitude, longtitude, name):
+        self.latitude = latitude
+        self.longtitude = longtitude
+        self.name = name
+
+    def __str__(self):
+        return 'Lat : %s\nLong : %s\nName : %s' % (self.latitude, self.longtitude, self.name)
+
+
 ## Your Auth Token here
 auth = 'Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 

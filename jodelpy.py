@@ -4,18 +4,6 @@ from settings import headers, post_headers, home
 
 __author__ = 'Jan'
 
-
-class Location():
-
-    def __init__(self, latitude, longtitude, name):
-        self.latitude = latitude
-        self.longtitude = longtitude
-        self.name = name
-
-    def __str__(self):
-        return 'Lat : %s\nLong : %s\nName : %s' % (self.latitude, self.longtitude, self.name)
-
-
 def make_request(url):
     return requests.get(url, headers=headers);
 
@@ -44,6 +32,12 @@ def post(text, latitude, longtitude, place, country="DE", color="DD5F5F"):
         color, place, latitude, longtitude, country, text)
     return requests.post("https://api.go-tellm.com/api/v2/posts/", data=payload, headers=post_headers)
 
+def post_image(file, latitude, longtitude, place, country="DE", color="DD5F5F"):
+    with open(file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    payload = "{\"color\":\"%s\",\"image\":\"%s\",\"location\":{\"loc_accuracy\":10.0,\"city\":\"%s\",\"loc_coordinates\":{\"lat\":%s,\"lng\":%s},\"country\":\"%s\",\"name\":\"41\"},\"message\":\"photo\"}" % (
+        color,encoded_string, place, latitude, longtitude, country)
+    return requests.post("https://api.go-tellm.com/api/v2/posts/", data=payload, headers=post_headers)
 
 print get_karma()
 
