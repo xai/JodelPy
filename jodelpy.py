@@ -2,82 +2,156 @@ import requests
 import base64
 import string
 import random
-
-from settings import headers, post_headers, home, uni, unauth_post_headers
+import json
 
 __author__ = 'Jan'
 
+user_agent = 'Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)'
 
-def make_request(url):
-    return requests.get(url, headers=headers);
+base_headers = {"Connection":"keep-alive",
+                "User-Agent":user_agent,
+                "Accept-Encoding":"gzip",
+                "Host":"api.go-tellm.com",
+                "Content-Type":"application/json; charset=UTF-8"}
+
+auth = 'Bearer 4c512938-e33d-411e-84ff-cd8b97dc3945'
 
 
-def get_device_uid():
+
+uni = {"latitude":53.1070074, "longtitude":8.85392980000006, "city":"Bremen"}
+
+
+def create_header(doAuth = True):
+    headers = base_headers
+    if doAuth:
+        headers['Authorization'] = auth
+    return headers
+
+
+def do_get(url):
+    return requests.get(url, headers=create_header());
+
+
+def do_put(url, payload):
+    if payload is None:
+        return requests.put(url, headers=create_header())
+
+    return requests.put(url, data=payload, headers=create_header())
+
+
+def do_delete(url):
+    return requests.delete(url, headers=create_header())
+
+
+def do_post(url, payload, doAuth=True):
+
+    return requests.post(url, data=payload, headers=create_header(doAuth=doAuth))
+
+
+def new_device_uid():
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(63))
 
 
-def get_access_token(place,latitude,longtitude,deviceuid=get_device_uid()):
-    payload = '{"client_id":"81e8a76e-1e02-4d17-9ba0-8a7020261b26","device_uid":"'+deviceuid+'","location":{"loc_accuracy":19.0,"city":"'+place+'","loc_coordinates":{"lat":'+str(latitude)+',"lng":'+str(longtitude)+'},"country":"DE"}}'
-    return requests.post("https://api.go-tellm.com/api/v2/users/", data=payload, headers=unauth_post_headers).json()['access_token']
+def get_access_token(place, latitude, longtitude, deviceuid=new_device_uid()):
+    payload = {"client_id":"81e8a76e-1e02-4d17-9ba0-8a7020261b26",
+               "device_uid":deviceuid,
+               "location":
+                   {"loc_accuracy":19.0,
+                    "city":place,
+                    "loc_coordinates":
+                        {"lat":latitude,
+                         "lng":longtitude},
+                       "country":"DE"}
+               }
+
+    json_payload = json.dumps(payload)
+
+    return do_post("https://api.go-tellm.com/api/v2/users/", json_payload, False).json()
 
 
 def get_karma():
-    return make_request("https://api.go-tellm.com/api/v2/users/karma").json()['karma']
+    return do_get("https://api.go-tellm.com/api/v2/users/karma").json()['karma']
 
 
 def get_posts():
-    return make_request("https://api.go-tellm.com/api/v2/posts/").json()['posts']
+    return do_get("https://api.go-tellm.com/api/v2/posts/").json()['posts']
 
 
 def get_posts_raw():
-    return make_request("https://api.go-tellm.com/api/v2/posts/").content
+    return do_get("https://api.go-tellm.com/api/v2/posts/").content
 
 
 def set_pos(longtitude, latitude, place, country="DE"):
-    payload = "{\"location\":{\"loc_accuracy\":19.0,\"city\":\"%s\",\"loc_coordinates\":{\"lat\":%s,\"lng\":%s},\"country\":\"%s\"}}" % (place, latitude, longtitude, country)
-    return requests.put("https://api.go-tellm.com/api/v2/users/place", data=payload, headers=post_headers).content
+    payload = {"location":
+                   {"loc_accuracy":19.0,
+                    "city": place ,
+                    "loc_coordinates":
+                        {"lat":latitude,
+                         "lng":longtitude},
+                    "country":country}
+               }
+    json_payload = json.dumps(payload)
+
+    return do_put("https://api.go-tellm.com/api/v2/users/place", json_payload).content
 
 
 def post(text, latitude, longtitude, place, country="DE", color="DD5F5F"):
-    payload = "{\"color\":\"%s\",\"location\":{\"loc_accuracy\":10.0,\"city\":\"%s\",\"loc_coordinates\":{\"lat\":%s,\"lng\":%s},\"country\":\"%s\",\"name\":\"41\"},\"message\":\"%s\"}" % (
-        color, place, latitude, longtitude, country, text)
-    return requests.post("https://api.go-tellm.com/api/v2/posts/", data=payload, headers=post_headers)
+    payload = {"color":color,
+               "location":
+                   {"loc_accuracy":10.0,
+                    "city":place,
+                    "loc_coordinates":
+                        {"lat":latitude,
+                         "lng":longtitude},
+                    "country":country,
+                    "name":"41"},
+               "message":text
+               }
+    json_payload = json.dumps(payload)
+
+    return do_post("https://api.go-tellm.com/api/v2/posts/", json_payload)
 
 
 def delete(postid):
-    return requests.delete('https://api.go-tellm.com/api/v2/posts/%s' % postid, headers=headers).content
+    return do_delete('https://api.go-tellm.com/api/v2/posts/%s' % postid).content
 
 
 def post_image(file, latitude, longtitude, place, country="DE", color="DD5F5F"):
     with open(file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
-    payload = "{\"color\":\"%s\",\"image\":\"%s\",\"location\":{\"loc_accuracy\":10.0,\"city\":\"%s\",\"loc_coordinates\":{\"lat\":%s,\"lng\":%s},\"country\":\"%s\",\"name\":\"41\"},\"message\":\"photo\"}" % (
-        color,encoded_string, place, latitude, longtitude, country)
-    return requests.post("https://api.go-tellm.com/api/v2/posts/", data=payload, headers=post_headers)
+    payload = {"color":color,
+               "image":encoded_string,
+               "location":
+                   {"loc_accuracy":10.0,
+                    "city":place,
+                    "loc_coordinates":
+                        {"lat":latitude,
+                         "lng":longtitude},
+                    "country":country,
+                    "name":"41"},
+               "message":"photo"
+               }
+    json_payload = json.dumps(payload)
+    return do_post("https://api.go-tellm.com/api/v2/posts/", json_payload)
 
 
 def get_my_posts():
-    return make_request("https://api.go-tellm.com/api/v2/posts/mine/").content
+    return do_get("https://api.go-tellm.com/api/v2/posts/mine/").content
 
 
 def upvote(postid):
-    requests.put("https://api.go-tellm.com/api/v2/posts/%s/upvote" % postid, headers=headers)
+    return do_put("https://api.go-tellm.com/api/v2/posts/%s/upvote" % postid, None).content
 
 
 def downvote(postid):
-    return requests.put("https://api.go-tellm.com/api/v2/posts/%s/downvote" % postid, headers=headers).content
+    return do_put("https://api.go-tellm.com/api/v2/posts/%s/downvote" % postid, None).content
 
-#token = get_access_token(uni.name,uni.latitude,uni.longtitude)
-#print token
 
-#print auth
-#print headers
-#print get_karma()
+def new_acc(place, latitude, longtitude):
+    access = get_access_token(place, latitude, longtitude)
+    print access
+    auth = "Bearer %s" % access['access_token']
+    set_pos(longtitude, latitude, place)
 
-#print set_pos(home.longtitude, home.latitude, home.name)
-#print get_my_posts()
-#delete('563eb04c17ad6933438fcc7b')
-#print downvote("563ea157a9178fcc4d4e662b")
-#print post_image("pic.jpg", home.latitude, home.longtitude, home.name).content
-#upvote()
-#print get_posts_raw()
+posts = new_acc(home.name, home.latitude, home.longtitude)
+

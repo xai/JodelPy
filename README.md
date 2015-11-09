@@ -8,6 +8,9 @@ JodelPy is a rudimentary Python Interface for Jodel ( http://jodel-app.com )
   - Posting
   - Setting Position
   - Seeing Karma
+  - Up & Downvote
+  - Posting Images
+  - Getting an Access Token
 
 ### Requirements
 
