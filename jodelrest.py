@@ -138,7 +138,7 @@ class RESTClient(object):
 rc = RESTClient('Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)', None)
 #rc.post("pic.png", rc.uni['latitude'], rc.uni['longtitude'], rc.uni['city'])
 posts = rc.get_posts()
-print posts
+#print posts
 #id = posts[0]['post_id']
 #print "ID : %s" % id
 
