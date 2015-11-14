@@ -7,12 +7,20 @@ import requests
 
 __author__ = 'Jan'
 
+'''
+Locations are formatted like this.
+
+location = {'latitude' : 0, 'longtitude' : 0, 'city' : 'City'}
+'''
+
 class RESTClient(object):
     API_URL = 'https://api.go-tellm.com/api/v2'
     
     BASE_HEADERS = {"Connection": "keep-alive",
                     "Accept-Encoding": "gzip",
                     "Content-Type": "application/json; charset=UTF-8"}
+
+    USER_AGENT = 'Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)'
 
     def new_device_uid(self):
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(63))
@@ -121,9 +129,9 @@ class RESTClient(object):
         self.set_pos(self.location['longtitude'], self.location['latitude'], self.location['city'])
         return "Bearer %s" % access['access_token']
 
-    def __init__(self, location, user_agent, auth=None):
+    def __init__(self, location, auth=None):
         self.headers = dict(self.BASE_HEADERS)
-        self.headers['User-Agent'] = user_agent
+        self.headers['User-Agent'] = self.USER_AGENT
         self.location = location
         if auth is None:
             auth = self.new_acc()

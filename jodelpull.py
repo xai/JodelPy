@@ -1,0 +1,30 @@
+import argparse
+from jodelrest import RESTClient
+import os
+import json
+
+__author__ = 'Jan'
+
+parser = argparse.ArgumentParser(description='Write Jodel\' to JSON')
+parser.add_argument("outputfile", help="the file the Jodel's should be written to")
+parser.add_argument("-f", "--from-file", help="read the Location from a file", required=True)
+args = parser.parse_args()
+
+if args.from_file:
+    if os.path.isfile(args.from_file):
+        with open(args.from_file) as data_file:
+            location = json.load(data_file)
+    else:
+        print 'File does not exist : %s' % args.from_file
+        exit(0)
+
+
+rc = RESTClient(location, None)
+
+filename = args.outputfile
+
+if not str(filename).endswith('.json'):
+    filename = "%s%s" % (filename, '.json')
+
+with open(filename, 'w') as outfile:
+    outfile.write(rc.get_posts_raw())

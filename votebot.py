@@ -5,7 +5,7 @@ __author__ = 'Jan'
 
 uni = {"latitude": 53.107, "longtitude": 8.853, "city": "Bremen"}
 
-rc = RESTClient(uni, 'Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)', None)
+rc = RESTClient(uni, None)
 posts = rc.get_posts()
 rc.close()
 
