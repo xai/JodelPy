@@ -28,7 +28,7 @@ for post in posts:
     else:
         amount = int(raw_input('# Wie viel ? '))
         for i in tqdm(range(amount)):
-            rc = RESTClient(uni, 'Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; Nexus 6 Build/23.4.A)', None)
+            rc = RESTClient(uni, None)
             try:
                 if var == "up":
                     rc.upvote(id)
