@@ -2,6 +2,7 @@ import argparse
 from jodelrest import RESTClient
 import os
 import json
+from requests.exceptions import ConnectionError
 
 __author__ = 'Jan'
 
@@ -18,13 +19,15 @@ if args.from_file:
         print 'File does not exist : %s' % args.from_file
         exit(0)
 
+try:
+    rc = RESTClient(location, None)
+    filename = args.outputfile
 
-rc = RESTClient(location, None)
+    if not str(filename).endswith('.json'):
+        filename = "%s%s" % (filename, '.json')
 
-filename = args.outputfile
+    with open(filename, 'w') as outfile:
+        outfile.write(rc.get_posts_raw())
+except ConnectionError:
+    pass
 
-if not str(filename).endswith('.json'):
-    filename = "%s%s" % (filename, '.json')
-
-with open(filename, 'w') as outfile:
-    outfile.write(rc.get_posts_raw())
