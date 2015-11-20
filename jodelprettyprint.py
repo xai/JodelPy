@@ -22,5 +22,4 @@ def print_post(post, indent=0):
 dump = json.load(sys.stdin)
 
 for post in reversed(dump['posts']):
-    indent = 0
-    print_post(post, indent)
+    print_post(post, 0)
