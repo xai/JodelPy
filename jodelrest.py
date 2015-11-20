@@ -22,6 +22,8 @@ class RESTClient(object):
 
     USER_AGENT = 'Jodel/65000 Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)'
 
+
+
     def new_device_uid(self):
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(63))
 
@@ -129,7 +131,7 @@ class RESTClient(object):
         self.set_pos(self.location['longtitude'], self.location['latitude'], self.location['city'])
         return "Bearer %s" % access['access_token']
 
-    def __init__(self, location, auth=None):
+    def __init__(self, location, auth=None, verify=True):
         self.headers = dict(self.BASE_HEADERS)
         self.headers['User-Agent'] = self.USER_AGENT
         self.location = location
@@ -138,18 +140,19 @@ class RESTClient(object):
 
         self.headers['Authorization'] = auth
         self.auth = auth
+        self.VERIFY = verify
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
 
     def do_get(self, url):
-        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers, verify=False)
+        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers, verify=self.VERIFY)
 
     def do_put(self, url, payload=None):
-        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
+        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
 
     def close(self):
         requests.session().close()

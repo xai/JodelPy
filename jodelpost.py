@@ -2,11 +2,9 @@ from jodelrest import RESTClient
 import Tkinter
 import tkFileDialog
 from tqdm import *
+import sys
 import time
 __author__ = 'Jan'
-
-import requests
-requests.packages.urllib3.disable_warnings()
 
 class JodelPost(object):
     def __init__(self, location, auth=None):
@@ -45,13 +43,12 @@ class JodelPost(object):
 
 
 uni = {"latitude": 53.107, "longtitude": 8.853, "city": "Bremen"}
-
 post = JodelPost(uni)
 
 menuInput = 0
 
 while menuInput <= 0 or menuInput > 3:
-    print '1) Bild posten\n2) Text posten\n\n3) Beenden\n\n'
+    print '1) Bild posten\n2) Text posten\n\n3) Beenden\n'
     try:
         menuInput = int(raw_input('Auswahl ? : '))
     except ValueError:
@@ -60,7 +57,7 @@ while menuInput <= 0 or menuInput > 3:
 if menuInput == 3:
     exit()
 elif menuInput == 2:
-    text = raw_input('Text ? :\n')
+    text = str(raw_input('Text ? :\n')).decode(sys.stdin.encoding)
     post.post_text(text)
 elif menuInput == 1:
     root = Tkinter.Tk()
