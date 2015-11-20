@@ -35,7 +35,6 @@ class JodelPost(object):
                 break
 
     def boost_post(self, votes):
-        print self.last_post
         for i in tqdm(range(votes)):
             tmpClient = RESTClient(self.location, None)
             tmpClient.upvote(self.last_post)
@@ -92,6 +91,7 @@ if boost == 'J':
 
     for i in tqdm(range(10)):
         time.sleep(1)
+
     print '\n'
     while True:
         amount = raw_input('Wie viel ? \n')
