@@ -7,8 +7,8 @@ from requests.exceptions import ConnectionError
 __author__ = 'Jan'
 
 parser = argparse.ArgumentParser(description='Write Jodel\' to JSON')
-parser.add_argument("outputfile", help="the file the Jodel's should be written to")
 parser.add_argument("-f", "--from-file", help="read the Location from a file", required=True)
+parser.add_argument("-o", "--outputfile", help="the file the Jodel's should be written to")
 args = parser.parse_args()
 
 if args.from_file:
@@ -21,13 +21,17 @@ if args.from_file:
 
 try:
     rc = RESTClient(location, None)
-    filename = args.outputfile
 
-    if not str(filename).endswith('.json'):
-        filename = "%s%s" % (filename, '.json')
+    if args.outputfile:
+        filename = args.outputfile
 
-    with open(filename, 'w') as outfile:
-        outfile.write(rc.get_posts_raw())
+        if not str(filename).endswith('.json'):
+            filename = "%s%s" % (filename, '.json')
+
+        with open(filename, 'w') as outfile:
+            outfile.write(rc.get_posts_raw())
+    else:
+        print rc.get_posts_raw()
 except ConnectionError:
     pass
 
