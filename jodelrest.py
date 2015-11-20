@@ -131,28 +131,26 @@ class RESTClient(object):
         self.set_pos(self.location['longtitude'], self.location['latitude'], self.location['city'])
         return "Bearer %s" % access['access_token']
 
-    def __init__(self, location, auth=None, verify=True):
+    def __init__(self, location, auth=None):
         self.headers = dict(self.BASE_HEADERS)
         self.headers['User-Agent'] = self.USER_AGENT
         self.location = location
         if auth is None:
             auth = self.new_acc()
-
         self.headers['Authorization'] = auth
         self.auth = auth
-        self.VERIFY = verify
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
 
     def do_get(self, url):
-        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers, verify=self.VERIFY)
+        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers)
 
     def do_put(self, url, payload=None):
-        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
+        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=self.VERIFY)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
 
     def close(self):
         requests.session().close()

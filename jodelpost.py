@@ -6,6 +6,7 @@ import sys
 import time
 __author__ = 'Jan'
 
+
 class JodelPost(object):
     def __init__(self, location, auth=None):
 
@@ -33,6 +34,9 @@ class JodelPost(object):
             if post['post_own'] == 'own':
                 self.last_post = post['post_id']
                 break
+
+    def get_posts(self):
+        return self.client.get_posts()
 
     def boost_post(self, votes):
         for i in tqdm(range(votes)):
@@ -90,7 +94,7 @@ if boost == 'J':
 
     for i in tqdm(range(10)):
         time.sleep(1)
-
+    post.set_last_post(post.get_posts())
     print '\n'
     while True:
         amount = raw_input('Wie viel ? \n')
@@ -100,5 +104,3 @@ if boost == 'J':
             continue
         break
     post.boost_post(amount)
-
-
