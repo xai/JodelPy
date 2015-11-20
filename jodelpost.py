@@ -5,6 +5,8 @@ from tqdm import *
 import time
 __author__ = 'Jan'
 
+import requests
+requests.packages.urllib3.disable_warnings()
 
 class JodelPost(object):
     def __init__(self, location, auth=None):

@@ -140,16 +140,16 @@ class RESTClient(object):
         self.auth = auth
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
 
     def do_get(self, url):
-        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers);
+        return requests.get("%s%s" % (self.API_URL, url), headers=self.headers, verify=False)
 
     def do_put(self, url, payload=None):
-        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
+        return requests.put("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
 
     def do_post(self, url, payload):
-        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers)
+        return requests.post("%s%s" % (self.API_URL, url), data=payload, headers=self.headers, verify=False)
 
     def close(self):
         requests.session().close()
